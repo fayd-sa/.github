@@ -1,0 +1,8 @@
+blank_issues_enabled: true
+contact_links:
+  - name: Support questions 💬
+    url: https://github.com/orgs/fayd-sa/discussions
+    about: Find announcements, discussions, recipes and much more in the Fayd Discussions.
+  - name: Propose a change to Fayd 📝
+    url: https://github.com/fayd-sa/rfcs/
+    about: Would you like to propose a change to Fayd? RFC is what you are looking for!
