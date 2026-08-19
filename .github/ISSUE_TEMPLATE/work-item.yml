@@ -1,0 +1,38 @@
+name: Work item
+description: Any tracked work — a change, a bug, a decision owed.
+body:
+  - type: markdown
+    attributes:
+      value: |
+        This is the organization default. A repo with venture-specific classification
+        (track, phase) ships its own form and overrides this one.
+  - type: textarea
+    id: what
+    attributes:
+      label: What and why
+      description: >
+        The outcome, and enough context that a future session does not have to re-derive it.
+        Prefer the reasoning over the restatement — what the repo already says is not worth repeating.
+    validations:
+      required: true
+  - type: textarea
+    id: done
+    attributes:
+      label: Done when
+      description: >
+        Behavioural, not structural. "It builds" and "the file exists" are not done-criteria —
+        what observable behaviour proves this worked?
+    validations:
+      required: true
+  - type: dropdown
+    id: tier
+    attributes:
+      label: Surface tier
+      description: >
+        Classified by the surface the change touches, not by the repo. Executable means
+        the pre-merge review gate is mandatory.
+      options:
+        - "E — executable: code, CI, hooks, schema, infra config"
+        - "P — prose: docs, prompts, plans"
+    validations:
+      required: true

@@ -1,9 +1,13 @@
 # .github
 
-Default community health files for the `fayd-sa` GitHub organization repositories.
+Organization-wide defaults for `fayd-sa`.
 
-The list of all supported health files by GitHub can be found [here](https://docs.github.com/en/github/building-a-strong-community/creating-a-default-community-health-file#supported-file-types).
+| Path | Applies to |
+|---|---|
+| `profile/README.md` | The organization profile page |
+| `.github/ISSUE_TEMPLATE/` | Default issue forms for any repo without its own |
+| `.github/PULL_REQUEST_TEMPLATE.md` | Default PR template for any repo without its own |
+| `.github/CODE_OF_CONDUCT.md` | Default code of conduct |
 
-See [Creating a default community health file](https://docs.github.com/en/github/building-a-strong-community/creating-a-default-community-health-file#supported-file-types) GitHub documentation for more information.
-
-> Note: for organization templates, you need the extra `.github` folder. The documentation on GitHub is not clearly mentioning it.
+A repo that ships its own template overrides the default. Repos with venture-specific
+classification do exactly that — the default here carries only what is true everywhere.
