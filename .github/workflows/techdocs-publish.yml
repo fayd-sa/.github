@@ -1,0 +1,65 @@
+# Reusable TechDocs publisher (documentation architecture, R5).
+# A repo onboards by calling this on pushes touching docs/** or mkdocs.yml:
+#
+#   jobs:
+#     docs:
+#       uses: fayd-sa/.github/.github/workflows/techdocs-publish.yml@main
+#       with:
+#         entity: default/component/<name>
+#       secrets: inherit
+#
+# Publishes to the S3-compatible docs store (Cloudflare R2 today; a cloud
+# bucket later is the same interface). Org-level Actions secrets/vars:
+#   TECHDOCS_AWS_ACCESS_KEY_ID / TECHDOCS_AWS_SECRET_ACCESS_KEY (secrets)
+#   TECHDOCS_S3_ENDPOINT, TECHDOCS_BUCKET (org variables)
+name: techdocs-publish
+
+on:
+  workflow_call:
+    inputs:
+      entity:
+        description: "Catalog entity triplet namespace/kind/name"
+        required: true
+        type: string
+      source-dir:
+        description: "Directory holding mkdocs.yml"
+        required: false
+        type: string
+        default: "."
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build chain
+        run: |
+          python -m pip install --quiet mkdocs-techdocs-core
+          npm install -g --silent @techdocs/cli
+
+      - name: Generate
+        working-directory: ${{ inputs.source-dir }}
+        run: techdocs-cli generate --no-docker --verbose
+
+      - name: Publish
+        working-directory: ${{ inputs.source-dir }}
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.TECHDOCS_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.TECHDOCS_AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: auto
+        run: |
+          techdocs-cli publish \
+            --publisher-type awsS3 \
+            --storage-name "${{ vars.TECHDOCS_BUCKET }}" \
+            --awsEndpoint "${{ vars.TECHDOCS_S3_ENDPOINT }}" \
+            --awsS3ForcePathStyle \
+            --entity "${{ inputs.entity }}"
