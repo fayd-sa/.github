@@ -1,0 +1,81 @@
+# Reusable TechDocs publisher (documentation architecture, R5).
+# A repo onboards by calling this on pushes touching docs/** or mkdocs.yml:
+#
+#   jobs:
+#     docs:
+#       uses: fayd-sa/.github/.github/workflows/techdocs-publish.yml@main
+#       secrets:
+#         TECHDOCS_AWS_ACCESS_KEY_ID: ${{ secrets.TECHDOCS_AWS_ACCESS_KEY_ID }}
+#         TECHDOCS_AWS_SECRET_ACCESS_KEY: ${{ secrets.TECHDOCS_AWS_SECRET_ACCESS_KEY }}
+#
+# Security posture (gate-reviewed):
+# - The catalog entity derives from runner-set GITHUB_REPOSITORY inside the
+#   Publish step itself: caller code (which runs at Generate time and can
+#   write GITHUB_ENV) cannot rename the prefix it publishes into.
+# - Store endpoint + bucket are step-level env on Publish, in this PR-gated
+#   file: step env beats GITHUB_ENV, and they are deliberately not Actions
+#   variables (repo-level vars shadow org vars).
+# - Caller-influenced values reach the shell only via env, quoted.
+# Store: Cloudflare R2 today; a cloud-cluster bucket later is the same
+# interface (edit ENDPOINT/BUCKET here, once).
+name: techdocs-publish
+
+on:
+  workflow_call:
+    secrets:
+      TECHDOCS_AWS_ACCESS_KEY_ID:
+        required: true
+      TECHDOCS_AWS_SECRET_ACCESS_KEY:
+        required: true
+
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    permissions:
+      contents: read
+    concurrency:
+      group: techdocs-publish-${{ github.repository }}
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build chain (pinned)
+        run: |
+          python -m pip install --quiet mkdocs-techdocs-core==1.7.1
+          npm install -g --silent @techdocs/cli@1.11.3
+
+      - name: Generate
+        run: techdocs-cli generate --no-docker
+
+      - name: Publish
+        # Step-level env beats anything a Generate-time mkdocs hook wrote to
+        # GITHUB_ENV, and the entity derives from runner-set GITHUB_REPOSITORY
+        # inside this block (GITHUB_* names are rejected by GITHUB_ENV), so
+        # caller code cannot redirect the prefix, bucket, or endpoint.
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.TECHDOCS_AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.TECHDOCS_AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: auto
+          TECHDOCS_S3_ENDPOINT: https://cdc99b3befa4d6c7133b225632e79a4f.r2.cloudflarestorage.com
+          TECHDOCS_BUCKET: techdocs
+        run: |
+          set -eu
+          entity="default/component/${GITHUB_REPOSITORY#*/}"
+          techdocs-cli publish \
+            --publisher-type awsS3 \
+            --storage-name "$TECHDOCS_BUCKET" \
+            --awsEndpoint "$TECHDOCS_S3_ENDPOINT" \
+            --awsS3ForcePathStyle \
+            --entity "$entity"
