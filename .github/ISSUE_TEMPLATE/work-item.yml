@@ -23,8 +23,7 @@ body:
       description: >
         A checklist naming the check that proves each item. Behaviour, not structure: "it builds"
         proves little. Written or confirmed by the owner, not the agent.
-      value: |
-        - [ ] 
+      placeholder: "- [ ] The criterion, and the check that proves it"
     validations:
       required: true
   - type: textarea

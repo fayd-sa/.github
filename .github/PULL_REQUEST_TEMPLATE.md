@@ -1,10 +1,11 @@
 Closes #
+
 Refs #
 
 <!--
 Closes: the issue's criteria describe the repository, and merging delivers them.
 Refs: they describe a running system, and the issue closes when the observation is recorded.
-Delete the line that does not apply.
+Delete the line that does not apply. Several issues: repeat the keyword for each one.
 -->
 
 ## What
