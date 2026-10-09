@@ -1,0 +1,23 @@
+name: Decision
+description: A question that blocks work. Closes when its decision record lands in the repository.
+labels: ["lane:decide"]
+body:
+  - type: textarea
+    id: question
+    attributes:
+      label: The question
+      description: Stated so someone who was not there can tell what is being decided.
+    validations:
+      required: true
+  - type: textarea
+    id: options
+    attributes:
+      label: Options and their killing tests
+      description: Each option with the cheap measurement that would rule it out.
+    validations:
+      required: true
+  - type: textarea
+    id: blocks
+    attributes:
+      label: What this blocks
+      description: The work that waits on the answer. The blocked-by relationships are recorded on those issues.

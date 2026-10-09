@@ -1,21 +1,23 @@
-## What changed and why
+Closes #
+Refs #
 
-<!-- The reasoning, not a restatement of the diff. What was wrong, what is now true instead. -->
+<!--
+Closes: the issue's criteria describe the repository, and merging delivers them.
+Refs: they describe a running system, and the issue closes when the observation is recorded.
+Delete the line that does not apply.
+-->
+
+## What
 
 ## Verification
 
 <!--
-Verification means running the checks, not reading the diff. A green structural check is not
-behavioural verification.
-
-State what you ran and what it showed. If something is unverified, say so explicitly —
-unverified work is handed off as unverified, never implied to be tested.
+Commands run and what they showed. A green structural check is not behavioural verification.
+Say what this run cannot prove, and what the reader should look at closely.
 -->
 
-- [ ] Checks run and reported above (not just "should work")
-- [ ] Tier E surface: the pre-merge review gate has run
-- [ ] No secrets, credentials, personal data or counterparty names in the diff or the message
+## Gate
 
-## Notes for the reviewer
+<!-- Executable surface (code, CI, hooks, schema, infrastructure): the gate's round and outcome. Prose only: first-model review. -->
 
-<!-- Anything you are unsure about, deliberately deferred, or knowingly left incomplete. -->
+- [ ] No secret, credential, personal data or counterparty name in the diff or the messages

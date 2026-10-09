@@ -1,38 +1,34 @@
 name: Work item
-description: Any tracked work — a change, a bug, a decision owed.
+description: One change, sized to one pull request into the default branch, alone or as a layer of a stack.
+type: Task
+labels: ["intake"]
 body:
   - type: markdown
     attributes:
       value: |
-        This is the organization default. A repo with venture-specific classification
-        (track, phase) ships its own form and overrides this one.
+        A new issue is in intake until its criteria are confirmed. Set the type to Bug or Feature
+        where that is what it is. Blocked-by and parent relationships are recorded on the issue,
+        not in the text.
   - type: textarea
-    id: what
+    id: change
     attributes:
-      label: What and why
-      description: >
-        The outcome, and enough context that a future session does not have to re-derive it.
-        Prefer the reasoning over the restatement — what the repo already says is not worth repeating.
+      label: What changes
+      description: The change, in a few sentences, and what it is for.
     validations:
       required: true
   - type: textarea
-    id: done
+    id: acceptance
     attributes:
-      label: Done when
+      label: Acceptance criteria
       description: >
-        Behavioural, not structural. "It builds" and "the file exists" are not done-criteria —
-        what observable behaviour proves this worked?
+        A checklist naming the check that proves each item. Behaviour, not structure: "it builds"
+        proves little. Written or confirmed by the owner, not the agent.
+      value: |
+        - [ ] 
     validations:
       required: true
-  - type: dropdown
-    id: tier
+  - type: textarea
+    id: notes
     attributes:
-      label: Surface tier
-      description: >
-        Classified by the surface the change touches, not by the repo. Executable means
-        the pre-merge review gate is mandatory.
-      options:
-        - "E — executable: code, CI, hooks, schema, infra config"
-        - "P — prose: docs, prompts, plans"
-    validations:
-      required: true
+      label: Notes
+      description: Risks, what is out of scope, and where the change touches an executable surface.
